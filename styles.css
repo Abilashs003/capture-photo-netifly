@@ -57,7 +57,7 @@ body {
 
 .logo-section {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     animation: fadeInDown 0.8s ease;
 }
 
@@ -91,9 +91,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
     animation: fadeInUp 0.8s ease 0.2s both;
     width: 100%;
+    margin-bottom: 20px;
 }
 
 .capture-btn {
@@ -143,7 +144,6 @@ body {
 
 .hint-text {
     text-align: center;
-    margin-top: 40px;
     animation: fadeIn 1s ease 0.4s both;
 }
 
@@ -344,6 +344,14 @@ body {
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .capture-content {
+        padding: 20px;
+    }
+    
+    .logo-section {
+        margin-bottom: 30px;
+    }
+    
     .logo-section h1 {
         font-size: 28px;
     }
@@ -368,12 +376,18 @@ body {
 }
 
 @media (max-width: 480px) {
+    .capture-content {
+        padding: 15px;
+        gap: 15px;
+    }
+    
     .logo-section {
-        margin-bottom: 40px;
+        margin-bottom: 20px;
     }
     
     .camera-icon {
         padding: 20px;
+        margin-bottom: 16px;
     }
     
     .camera-icon svg {
@@ -383,10 +397,34 @@ body {
     
     .logo-section h1 {
         font-size: 24px;
+        margin-bottom: 6px;
+    }
+    
+    .subtitle {
+        font-size: 14px;
+    }
+    
+    .capture-section {
+        gap: 16px;
+        margin-bottom: 16px;
     }
     
     .capture-btn {
         padding: 16px 32px;
+        font-size: 15px;
+    }
+    
+    .btn-content {
+        gap: 10px;
+    }
+    
+    .btn-content svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .hint-text p {
+        font-size: 13px;
     }
     
     .upload-content,
