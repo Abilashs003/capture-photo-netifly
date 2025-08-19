@@ -5,37 +5,93 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Photo Capture</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Photo Capture</h1>
-        </header>
+    <div class="app-container">
+        <!-- Capture Screen -->
+        <div id="captureScreen" class="screen active">
+            <div class="capture-content">
+                <div class="logo-section">
+                    <div class="camera-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                    </div>
+                    <h1>Photo Capture</h1>
+                    <p class="subtitle">Take amazing photos instantly</p>
+                </div>
+                
+                <div class="capture-section">
+                    <button id="captureBtn" class="capture-btn">
+                        <div class="btn-content">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span>Capture Photo</span>
+                        </div>
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;">
+                </div>
+                
+                <div class="hint-text">
+                    <p>Tap the button to open your camera</p>
+                </div>
+            </div>
+        </div>
         
-        <main>
-            <div class="capture-section">
-                <button id="captureBtn" class="capture-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <!-- Upload Screen -->
+        <div id="uploadScreen" class="screen">
+            <div class="upload-content">
+                <div class="upload-animation">
+                    <div class="upload-icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <div class="progress-ring">
+                        <svg width="120" height="120">
+                            <circle class="progress-ring-circle" stroke="#e0e0e0" stroke-width="4" fill="transparent" r="56" cx="60" cy="60"/>
+                            <circle class="progress-ring-circle progress-ring-fill" stroke="#2196f3" stroke-width="4" fill="transparent" r="56" cx="60" cy="60"/>
+                        </svg>
+                    </div>
+                </div>
+                <h2>Uploading your photo...</h2>
+                <p class="upload-message">Please wait while we save your image</p>
+            </div>
+        </div>
+        
+        <!-- Success Screen -->
+        <div id="successScreen" class="screen">
+            <div class="success-content">
+                <div class="success-checkmark">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M7 12l3 3 7-7"/>
+                    </svg>
+                </div>
+                <h2>Upload Successful!</h2>
+                <p class="success-message">Your photo has been saved</p>
+                
+                <div class="preview-container">
+                    <img id="previewImage" alt="Uploaded photo" />
+                </div>
+                
+                <button id="newPhotoBtn" class="new-photo-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                         <circle cx="12" cy="13" r="4"/>
                     </svg>
-                    Capture Photo
+                    Take Another Photo
                 </button>
-                <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;">
             </div>
-            
-            <div class="upload-status" id="uploadStatus" style="display: none;">
-                <div class="spinner"></div>
-                <span>Uploading...</span>
-            </div>
-            
-            <div class="gallery-section">
-                <h2>Recent Uploads</h2>
-                <div id="gallery" class="gallery-grid">
-                    <!-- Images will be loaded here -->
-                </div>
-            </div>
-        </main>
+        </div>
     </div>
     
     <!-- Supabase SDK -->

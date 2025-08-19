@@ -9,15 +9,22 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // DOM elements
 const captureBtn = document.getElementById('captureBtn');
 const fileInput = document.getElementById('fileInput');
-const uploadStatus = document.getElementById('uploadStatus');
-const gallery = document.getElementById('gallery');
+const newPhotoBtn = document.getElementById('newPhotoBtn');
+const previewImage = document.getElementById('previewImage');
 
-// Recent uploads (stored in memory for this session)
-let recentUploads = [];
+// Screens
+const captureScreen = document.getElementById('captureScreen');
+const uploadScreen = document.getElementById('uploadScreen');
+const successScreen = document.getElementById('successScreen');
 
 // Handle capture button click
 captureBtn.addEventListener('click', () => {
     fileInput.click();
+});
+
+// Handle new photo button click
+newPhotoBtn.addEventListener('click', () => {
+    resetToCapture();
 });
 
 // Handle file selection
@@ -28,6 +35,21 @@ fileInput.addEventListener('change', (event) => {
     }
 });
 
+// Switch screens with animation
+function switchScreen(fromScreen, toScreen) {
+    fromScreen.classList.remove('active');
+    setTimeout(() => {
+        toScreen.classList.add('active');
+    }, 400);
+}
+
+// Reset to capture screen
+function resetToCapture() {
+    switchScreen(successScreen, captureScreen);
+    fileInput.value = '';
+    previewImage.src = '';
+}
+
 // Handle image capture and upload
 async function handleImageCapture(file) {
     // Validate file type
@@ -36,9 +58,8 @@ async function handleImageCapture(file) {
         return;
     }
 
-    // Show upload status
-    uploadStatus.style.display = 'flex';
-    captureBtn.disabled = true;
+    // Switch to upload screen
+    switchScreen(captureScreen, uploadScreen);
 
     try {
         // Create a unique filename
@@ -50,7 +71,10 @@ async function handleImageCapture(file) {
         // Upload the file to Supabase Storage
         const { data, error } = await supabase.storage
             .from(STORAGE_BUCKET)
-            .upload(filePath, file);
+            .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
         
         if (error) {
             throw error;
@@ -65,116 +89,18 @@ async function handleImageCapture(file) {
             throw new Error('Failed to get public URL');
         }
         
-        // Add to recent uploads
-        const uploadData = {
-            url: urlData.publicUrl,
-            timestamp: timestamp,
-            name: fileName,
-            path: filePath
-        };
+        // Set the preview image
+        previewImage.src = urlData.publicUrl;
         
-        recentUploads.unshift(uploadData);
-        
-        // Keep only the last 20 uploads
-        if (recentUploads.length > 20) {
-            recentUploads = recentUploads.slice(0, 20);
-        }
-        
-        // Update gallery
-        updateGallery();
-        
-        // Hide upload status
-        uploadStatus.style.display = 'none';
-        captureBtn.disabled = false;
-        
-        // Reset file input
-        fileInput.value = '';
+        // Wait a bit for the upload animation to complete
+        setTimeout(() => {
+            switchScreen(uploadScreen, successScreen);
+        }, 1500);
         
     } catch (error) {
         console.error('Error uploading file:', error);
         alert(`Upload failed: ${error.message}`);
-        uploadStatus.style.display = 'none';
-        captureBtn.disabled = false;
-    }
-}
-
-// Update gallery display
-function updateGallery() {
-    if (recentUploads.length === 0) {
-        gallery.innerHTML = `
-            <div class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                </svg>
-                <p>No photos yet. Capture your first photo!</p>
-            </div>
-        `;
-        return;
-    }
-
-    gallery.innerHTML = recentUploads.map(upload => {
-        const date = new Date(upload.timestamp);
-        const formattedDate = date.toLocaleString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        
-        return `
-            <div class="gallery-item" onclick="viewImage('${upload.url}')">
-                <img src="${upload.url}" alt="${upload.name}" loading="lazy">
-                <div class="timestamp">${formattedDate}</div>
-            </div>
-        `;
-    }).join('');
-}
-
-// View full-size image
-function viewImage(url) {
-    window.open(url, '_blank');
-}
-
-// Load existing images from Supabase Storage
-async function loadExistingImages() {
-    try {
-        // List files from the uploads folder
-        const { data, error } = await supabase.storage
-            .from(STORAGE_BUCKET)
-            .list('uploads', {
-                limit: 20,
-                offset: 0,
-                sortBy: { column: 'created_at', order: 'desc' }
-            });
-        
-        if (error) {
-            console.error('Error listing files:', error);
-            updateGallery();
-            return;
-        }
-        
-        if (data && data.length > 0) {
-            // Convert file list to upload format
-            recentUploads = data.map(file => {
-                const { data: urlData } = supabase.storage
-                    .from(STORAGE_BUCKET)
-                    .getPublicUrl(`uploads/${file.name}`);
-                
-                return {
-                    url: urlData.publicUrl,
-                    timestamp: new Date(file.created_at).getTime(),
-                    name: file.name,
-                    path: `uploads/${file.name}`
-                };
-            });
-        }
-        
-        updateGallery();
-    } catch (error) {
-        console.error('Error loading images:', error);
-        updateGallery();
+        switchScreen(uploadScreen, captureScreen);
     }
 }
 
@@ -182,14 +108,20 @@ async function loadExistingImages() {
 document.addEventListener('DOMContentLoaded', () => {
     // Check if Supabase is configured
     if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
-        gallery.innerHTML = `
-            <div class="empty-state">
-                <p>Please configure Supabase credentials in app.js</p>
-            </div>
-        `;
         captureBtn.disabled = true;
+        captureBtn.innerHTML = '<span>Please configure Supabase</span>';
         return;
     }
     
-    loadExistingImages();
+    // Ensure capture screen is active on load
+    captureScreen.classList.add('active');
+});
+
+// Prevent default drag and drop behavior
+document.addEventListener('dragover', (e) => {
+    e.preventDefault();
+});
+
+document.addEventListener('drop', (e) => {
+    e.preventDefault();
 });

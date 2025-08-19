@@ -5,187 +5,392 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #f5f5f5;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #333;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 16px;
+.app-container {
+    min-height: 100vh;
+    position: relative;
 }
 
-header {
-    background-color: #ffffff;
-    padding: 20px 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 32px;
-}
-
-header h1 {
-    font-size: 28px;
-    color: #2196f3;
-    text-align: center;
-}
-
-main {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.capture-section {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.capture-btn {
-    background-color: #2196f3;
-    color: white;
-    border: none;
-    padding: 16px 32px;
-    font-size: 18px;
-    font-weight: 500;
-    border-radius: 50px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-}
-
-.capture-btn:hover {
-    background-color: #1976d2;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
-}
-
-.capture-btn:active {
-    transform: translateY(0);
-}
-
-.capture-btn svg {
-    width: 24px;
-    height: 24px;
-}
-
-.upload-status {
-    text-align: center;
-    margin: 24px 0;
-    padding: 16px;
-    background-color: #e3f2fd;
-    border-radius: 8px;
+/* Screen Management */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.screen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Capture Screen */
+#captureScreen {
+    background: white;
+    padding: 20px;
+}
+
+.capture-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.logo-section {
+    text-align: center;
+    margin-bottom: 60px;
+    animation: fadeInDown 0.8s ease;
+}
+
+.camera-icon {
+    display: inline-flex;
+    padding: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.camera-icon svg {
+    color: white;
+}
+
+.logo-section h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #666;
+    font-weight: 400;
+}
+
+.capture-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    animation: fadeInUp 0.8s ease 0.2s both;
+    width: 100%;
+}
+
+.capture-btn {
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: white;
+    border: none;
+    padding: 20px 48px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 24px rgba(33, 150, 243, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.capture-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.capture-btn:hover::before {
+    left: 100%;
+}
+
+.capture-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(33, 150, 243, 0.45);
+}
+
+.capture-btn:active {
+    transform: translateY(-1px);
+}
+
+.btn-content {
+    display: flex;
+    align-items: center;
     gap: 12px;
 }
 
-.spinner {
-    width: 24px;
-    height: 24px;
-    border: 3px solid #90caf9;
-    border-top-color: #2196f3;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-.gallery-section h2 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 24px;
-}
-
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-}
-
-.gallery-item {
-    position: relative;
-    aspect-ratio: 1;
-    overflow: hidden;
-    border-radius: 8px;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.gallery-item:hover {
-    transform: scale(1.05);
-}
-
-.gallery-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.gallery-item .timestamp {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-    color: white;
-    padding: 8px;
-    font-size: 12px;
+.hint-text {
     text-align: center;
+    margin-top: 40px;
+    animation: fadeIn 1s ease 0.4s both;
 }
 
-.empty-state {
-    text-align: center;
-    padding: 60px 20px;
+.hint-text p {
     color: #999;
+    font-size: 14px;
 }
 
-.empty-state svg {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 16px;
-    stroke: #ddd;
+/* Upload Screen */
+#uploadScreen {
+    background: white;
 }
 
+.upload-content {
+    text-align: center;
+    padding: 40px;
+}
+
+.upload-animation {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 32px;
+}
+
+.upload-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: float 2s ease-in-out infinite;
+}
+
+.upload-icon svg {
+    color: #2196f3;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+    50% { transform: translate(-50%, -50%) translateY(-10px); }
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+    transition: stroke-dashoffset 0.35s;
+}
+
+.progress-ring-fill {
+    stroke-dasharray: 352;
+    stroke-dashoffset: 352;
+    animation: progress 2s ease-out forwards;
+}
+
+@keyframes progress {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.upload-content h2 {
+    font-size: 28px;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+.upload-message {
+    color: #666;
+    font-size: 16px;
+}
+
+/* Success Screen */
+#successScreen {
+    background: white;
+}
+
+.success-content {
+    text-align: center;
+    padding: 40px;
+    max-width: 500px;
+}
+
+.success-checkmark {
+    display: inline-flex;
+    padding: 24px;
+    background: linear-gradient(135deg, #4caf50 0%, #43a047 100%);
+    border-radius: 50%;
+    margin-bottom: 24px;
+    animation: scaleIn 0.4s ease;
+}
+
+.success-checkmark svg {
+    color: white;
+}
+
+@keyframes scaleIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success-content h2 {
+    font-size: 32px;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+.success-message {
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 32px;
+}
+
+.preview-container {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto 32px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    animation: fadeInUp 0.6s ease 0.2s both;
+}
+
+.preview-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.new-photo-btn {
+    background: white;
+    color: #2196f3;
+    border: 2px solid #2196f3;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.new-photo-btn:hover {
+    background: #2196f3;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.3);
+}
+
+.new-photo-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
-    header h1 {
-        font-size: 24px;
+    .logo-section h1 {
+        font-size: 28px;
     }
     
-    main {
-        padding: 16px;
-    }
-    
-    .capture-btn {
-        padding: 14px 28px;
+    .subtitle {
         font-size: 16px;
     }
     
-    .gallery-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 12px;
+    .capture-btn {
+        padding: 18px 40px;
+        font-size: 16px;
     }
     
-    .gallery-section h2 {
-        font-size: 20px;
+    .upload-content h2,
+    .success-content h2 {
+        font-size: 24px;
+    }
+    
+    .preview-container {
+        max-width: 250px;
     }
 }
 
 @media (max-width: 480px) {
-    .container {
-        padding: 0 12px;
+    .logo-section {
+        margin-bottom: 40px;
     }
     
-    .gallery-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 8px;
+    .camera-icon {
+        padding: 20px;
+    }
+    
+    .camera-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .logo-section h1 {
+        font-size: 24px;
+    }
+    
+    .capture-btn {
+        padding: 16px 32px;
+    }
+    
+    .upload-content,
+    .success-content {
+        padding: 20px;
     }
 }
